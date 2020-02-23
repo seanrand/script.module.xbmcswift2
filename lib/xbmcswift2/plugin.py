@@ -293,7 +293,10 @@ class Plugin(XBMCMixin):
             rule = self._view_functions[endpoint]
         except KeyError:
             try:
-                rule = (rule for rule in self._view_functions.values() if rule.view_func == endpoint).next()
+                if PY3:
+                    rule = (rule for rule in self._view_functions.values() if rule.view_func == endpoint).__next__()
+                else:
+                    rule = (rule for rule in self._view_functions.values() if rule.view_func == endpoint).next()
             except StopIteration:
                 raise NotFoundException(
                     '%s doesn\'t match any known patterns.' % endpoint)
